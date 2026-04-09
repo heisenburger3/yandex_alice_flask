@@ -1,7 +1,6 @@
 # импортируем библиотеки
 from flask import Flask, request, jsonify
 import logging
-import waitress
 
 # создаём приложение
 # мы передаём __name__, в нём содержится информация,
@@ -129,4 +128,4 @@ def get_suggests(user_id):
 
 
 if __name__ == '__main__':
-    waitress.serve(app, host="127.0.0.1", port=8080)
+    app.run()
