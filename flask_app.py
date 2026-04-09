@@ -79,7 +79,7 @@ def get_suggests(user_id):
 
     if len(suggests) < 2:
         suggests.append({
-            "title": "Ладно",
+            "title": ["Ладно", "куплю", "покупаю", "хорошо", "Я покупаю", "Я куплю"],
             "url": "https://market.yandex.ru/search?text=слон",
             "hide": True
         })
