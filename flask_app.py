@@ -43,16 +43,24 @@ def handle_dialog(req, res):
                 "Не хочу.",
                 "Не буду.",
                 "Отстань!",
-            ]
+            ],
+            'stage': 'elephant'
         }
         res['response']['text'] = 'Привет! Купи слона!'
         res['response']['buttons'] = get_suggests(user_id)
         return
 
-    if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-        res['response']['end_session'] = True
-        return
+    stage = sessionStorage[user_id]['stage']
+
+    if stage == 'elephant':
+        if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
+            res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
+            res['response']['stage'] = 'rabbit'
+            return
+    elif stage == 'rabbit':
+        if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
+            res['response']['text'] = 'Кролика тоже можно найти на Яндекс.Маркете!'
+            res['response']['end_session'] = True
 
     res['response']['text'] = \
         f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
@@ -61,6 +69,7 @@ def handle_dialog(req, res):
 
 def get_suggests(user_id):
     session = sessionStorage[user_id]
+    stage = session['stage']
 
     suggests = [
         {'title': suggest, 'hide': True}
@@ -69,13 +78,19 @@ def get_suggests(user_id):
 
     session['suggests'] = session['suggests'][1:]
     sessionStorage[user_id] = session
-
     if len(suggests) < 2:
-        suggests.append({
-            "title": "Ладно",
-            "url": "https://market.yandex.ru/search?text=слон",
-            "hide": True
-        })
+        if stage == 'elephant':
+            suggests.append({
+                "title": "Ладно",
+                "url": "https://market.yandex.ru/search?text=слон",
+                "hide": True
+            })
+        elif stage == 'rabbit':
+            suggests.append({
+                "title": "Ладно",
+                "url": "https://market.yandex.ru/search?text=кролик",
+                "hide": True
+            })
 
     return suggests
 
