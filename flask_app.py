@@ -89,5 +89,6 @@ def get_suggests(user_id):
 
 
 if __name__ == '__main__':
-    serve(app, host='127.0.0.1', port=8080)
+    port = int(os.environ.get("PORT", 8000))
+    serve(app, host='0.0.0.0', port=port)
     # app.run()
