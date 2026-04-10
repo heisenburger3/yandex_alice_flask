@@ -54,8 +54,7 @@ def handle_dialog(req, res):
 
     if stage == 'elephant':
         if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
-            res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-            res['response']['text'] = 'А теперь купи кролика'
+            res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!\nА теперь купи кролика'
             sessionStorage[user_id]['stage'] = 'rabbit'
             sessionStorage[user_id]['suggests'] = ["Не хочу.", "Зачем он мне?", "Отстань!"]
             return
@@ -66,6 +65,7 @@ def handle_dialog(req, res):
     elif stage == 'rabbit':
         if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
             res['response']['text'] = 'Кролика тоже можно найти на Яндекс.Маркете!'
+            res['response']['buttons'] = get_suggests(user_id)
             res['response']['end_session'] = True
             return
         res['response']['text'] = \
