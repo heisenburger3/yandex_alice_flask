@@ -1,0 +1,38 @@
+modules = ["python-3.11"]
+[agent]
+expertMode = true
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[deployment]
+run = ["sh", "-c", "python3 flask_app.py"]
+deploymentTarget = "cloudrun"
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 flask_app.py"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
