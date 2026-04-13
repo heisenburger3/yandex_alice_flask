@@ -3,15 +3,19 @@ from flask import Flask, request, jsonify
 import logging
 from waitress import serve
 
+logging.basicConfig(level="INFO", format="%(asctime)-20s | %(levelname)-9s | %(name)-15s | %(msg)s", datefmt="%Y-%m-%d %H:%M:%S")
+logger = logging.getLogger(__name__)
 app = Flask(__name__)
-
-logging.basicConfig(level=logging.INFO)
 
 sessionStorage = {}
 
 
 @app.route('/')
 def health_check():
+    try:
+        raise ZeroDivisionError("делить на ноль нельзя")
+    except Exception as e:
+        logger.error("произошла ошибка", exc_info=True)
     return ''
 
 
@@ -65,6 +69,12 @@ def handle_dialog(req, res):
     elif stage == 'rabbit':
         if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
             res['response']['text'] = 'Кролика тоже можно найти на Яндекс.Маркете!'
+            sessionStorage[user_id] = {
+                'suggests': [
+                    "Не хочу.",
+                    "Не буду.",
+                    "Отстань!",
+                ]}
             res['response']['buttons'] = get_suggests(user_id)
             res['response']['end_session'] = True
             return
@@ -102,5 +112,6 @@ def get_suggests(user_id):
 
 
 if __name__ == '__main__':
+    logger.info("Приложение запущено")
     port = int(os.environ.get("PORT", 8000))
     serve(app, host='0.0.0.0', port=port)
