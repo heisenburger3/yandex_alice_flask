@@ -56,7 +56,7 @@ def handle_dialog(req, res):
         if any(word in req['request']['original_utterance'].lower() for word in ['ладно', 'куплю', 'покупаю', 'хорошо']):
             res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!\nА теперь купи кролика'
             sessionStorage[user_id]['stage'] = 'rabbit'
-            sessionStorage[user_id]['suggests'] = ["Не хочу.", "Зачем он мне?", "Отстань!"]
+            res['response']['buttons'] = get_suggests(user_id)
             return
         res['response']['text'] = \
             f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
